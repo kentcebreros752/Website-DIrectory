@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+ <html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>K.C. Drone Co. — Aerial Photography, Mapping</title>
+  <meta name="description" content="Aerial photography, video, and mapping for real estate, insurance (WUI), and events." />
+  <link rel="preload" as="image" href="img/EVENT_001.JPG">
+  <link rel="preload" as="image" href="img/RE_001.JPG">
+  <link rel="preload" as="image" href="img/WUI_001.JPG">
+  <link rel="preload" as="image" href="img/CONSTR_001.JPG">
+  <link rel="preload" as="image" href="img/UTIL_001.JPG">
+  <link rel="preload" as="image" href="img/LAND_001.JPG">
+  <link rel="preload" as="image" href="img/about_drone_001.jpg">
+  <link rel="preload" as="image" href="img/RE_002.JPG">
+  <link rel="preload" as="image" href="img/RE_003.JPG">
+  <link rel="preload" as="image" href="img/RE_004.JPG">
+  <link rel="preload" as="image" href="img/RE_005.JPG">
+  <link rel="preload" as="image" href="img/RE_006.JPG">
+  <link rel="preload" as="image" href="img/WUI_002.JPG">
+  <link rel="preload" as="image" href="img/WUI_003.JPG">
+  <link rel="preload" as="image" href="img/CONSTR_002.JPG">
+  <link rel="preload" as="image" href="img/UTIL_002.JPG">
+  <link rel="preload" as="image" href="img/LAND_002.JPG">
+  <link rel="preload" as="image" href="img/LAND_003.JPG">
+  <style>
+    :root{
+      --brand:#3F6E91;
+      --brand-dark:#30566f;
+      --bg:#ffffff;
+      --ink:#0f172a;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --ring:rgba(15,23,42,.08);
+      --radius:16px;
+      --maxw:1100px;
+
+      /* Logo/header animation vars */
+      --logo-scale:1;     /* 1 → 0.25 when shrunk */
+      --logo-box:160px;   /* 160px → 46px when shrunk */
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Segoe UI,Roboto,system-ui,sans-serif;
+      line-height:1.6;
+      font-size:110%;
+    }
+
+    body {
+      letter-spacing: -0.2px;
+      font-weight: 400; /* Regular weight for body */
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 {
+      font-weight: 600; /* Semi-bold for headings */
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    nav a {
+      font-weight: 500; /* Medium for nav links */
+      letter-spacing: -0.3px;
+    }
+
+    /* Header / Nav */
+    header{
+      position:sticky; top:0; z-index:50;
+      background:rgba(255,255,255,.9);
+      backdrop-filter:saturate(160%) blur(10px);
+      border-bottom:1px solid #eee;
+      transition: background .4s ease, box-shadow .4s ease, border-color .4s ease;
+    }
+    .nav{
+      max-width:var(--maxw); margin:0 auto; padding:0 20px;
+      display:grid;
+      grid-template-columns:auto 1fr auto; /* logo | centered links | burger */
+      align-items:center;
+      gap:24px;
+      height:var(--logo-box);               /* lock header height to logo box */
+      position:relative;                    /* anchor mobile dropdown */
+      transition: height .4s cubic-bezier(.22,.61,.36,1), padding .4s cubic-bezier(.22,.61,.36,1);
+    }
+    .brand{display:flex; align-items:center; height:var(--logo-box); transition:height .4s cubic-bezier(.22,.61,.36,1)}
+    .brand img{
+      height:160px; width:auto; display:block;
+      transform-origin:left center;
+      transform:scale(var(--logo-scale));
+      transition: transform .4s cubic-bezier(.22,.61,.36,1);
+      will-change: transform;
+    }
+
+    .links{
+      display:flex; gap:20px; align-items:center;
+      justify-content:center; /* center between logo and right margin */
+    }
+    .links a{
+      text-decoration:none; color:var(--ink); padding:6px 10px; border-radius:10px; font-weight:500;
+      transition: background .2s ease;
+    }
+    .links a.active,.links a:hover{background:var(--ring)}
+
+    .nav-end{display:flex; align-items:center; justify-content:flex-end}
+    .burger{display:none; border:0; background:transparent; font-size:28px; cursor:pointer}
+
+    /* Shrunk state (more breathing room) */
+    header.shrink{ --logo-scale:.25; --logo-box:46px; }
+
+    /* Hero */
+    .hero{
+      min-height:70vh; display:grid; place-items:center; text-align:center; padding:84px 20px 56px;
+      color:#fff; position:relative; overflow:hidden; background:#0b1220;
+    }
+    .hero::before{
+      content:""; position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(11,18,32,0.30), rgba(11,18,32,0.68));
+      opacity:1; z-index:1;
+    }
+    .hero-video{
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+      z-index:0; pointer-events:none; filter:saturate(105%);
+    }
+    .hero-inner{
+      position:relative; max-width:820px; padding:28px; border-radius:var(--radius);
+      transform:translateY(8px); opacity:0; z-index:2;
+    }
+    .kicker{display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); margin-bottom:10px; font-size:calc(1.1 * 12px); letter-spacing:.3px}
+    .hero h1{margin:6px 0 10px; font-size:calc(1.1 * clamp(32px,5vw,56px)); line-height:1.15}
+    .hero p{margin:0 auto 22px; max-width:700px; color:#e8edf3}
+    .btn{
+      display:inline-block; padding:12px 18px; border-radius:12px;
+      background:var(--brand); color:#fff; text-decoration:none; font-weight:700;
+      box-shadow:0 8px 24px rgba(63,110,145,.35); transition:.2s transform;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.alt{background:#fff; color:var(--brand); border:1px solid rgba(0,0,0,.06)}
+
+    /* Sections */
+    .section{padding:68px 20px; position:relative}
+    .container{max-width:var(--maxw); margin:0 auto}
+    h2{font-size:calc(1.1 * clamp(24px,3vw,36px)); margin:0 0 12px}
+    .muted{color:var(--muted); margin:0 0 28px}
+
+    /* Alternating section backgrounds */
+    .section.alt{ background:#eaf2f9; }
+
+    /* Bulletproof section separators (no seams) */
+    .feather-divider{ height:140px; pointer-events:none; }
+    /* white → alt(#eaf2f9) */
+    .feather-divider.to-alt{
+      background:linear-gradient(to bottom, #ffffff 0%, rgba(234,242,249,.35) 45%, rgba(234,242,249,1) 100%);
+    }
+    /* alt(#eaf2f9) → white */
+    .feather-divider.to-white{
+      background:linear-gradient(to bottom, rgba(234,242,249,1) 0%, rgba(234,242,249,.35) 55%, #ffffff 100%);
+    }
+
+    /* white → white (subtle brand-tinted feather) */
+    .feather-divider.white-soft{
+      background:linear-gradient(to bottom, #ffffff 0%, rgba(234,242,249,.28) 50%, #ffffff 100%);
+    }
+
+    /* Section title accent underline */
+    .section h2{ text-align:center; }
+    .section h2::after{
+      content:""; display:block; width:56px; height:4px; margin:10px auto 0;
+      background:var(--brand); border-radius:999px;
+    }
+
+    /* Badges */
+    .badges{display:flex; gap:10px; flex-wrap:wrap}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+      border:1px solid #e5e7eb; background:#fff; color:var(--brand-dark); font-weight:600; font-size:calc(1.1 * 12px);
+    }
+
+    /* About section photo */
+    .about-media{ margin-top:22px; }
+    #about .thumb{ max-width:900px; margin:0 auto; aspect-ratio:16/9; }
+
+    /* Grids / Cards */
+    .info-icon{
+      width:16px; height:16px; margin-left:8px; cursor:pointer;
+      vertical-align:middle; display:inline-block; object-fit:contain;
+    }
+    .grid{display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    .card{
+      background:var(--card); border:1px solid #eee; border-radius:var(--radius);
+      padding:22px; box-shadow:0 10px 34px rgba(0,0,0,.06); transform:translateY(10px); opacity:0;
+    }
+    /* Subtle hover lift on cards */
+    .card{ transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+    .card:hover{
+      transform: translateY(-5px);
+      box-shadow:0 16px 40px rgba(0,0,0,.10);
+      border-color: rgba(63,110,145,.25); /* brand-tinted outline */
+    }
+    .card h3{margin:0 0 8px}
+    /* Center service/industry titles and info icon */
+    .card h3{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      text-align:center;
+    }
+    .card p{margin:0; color:var(--muted)}
+
+    /* Portfolio */
+    .portfolio-grid{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); align-items:start;}
+    /* Smooth height transition to avoid page jump during filtering */
+    .portfolio-grid{ transition: height .55s ease-in-out; }
+    .portfolio-grid.height-lock{ overflow:hidden; }
+    .portfolio-grid.cols-1{ grid-template-columns:1fr; }
+    .portfolio-grid.cols-2{ grid-template-columns:repeat(2, minmax(340px, 1fr)); }
+    .thumb{
+      position:relative; overflow:hidden; border-radius:12px; border:1px solid #eee; background:#f7f7f7;
+      cursor:pointer;
+      aspect-ratio: 16/9;
+      opacity:1; transform:none;
+      transition: opacity .12s ease-out; /* fast dissolve (<=100ms perceived) */
+      will-change: opacity;
+    }
+    .thumb img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s ease}
+    .thumb:hover img{transform:scale(1.03)}
+    /* Disable hover zoom during filtering to prevent flicker */
+    .filtering .thumb:hover img{ transform:none; }
+
+    /* Mapping full-extent mode (only when Mapping filter is active) */
+    .portfolio-grid.mapping-mode{ grid-template-columns:1fr; }
+    .portfolio-grid.mapping-mode .thumb[data-cat="mapping"]{
+      aspect-ratio:auto;              /* let the container grow with the image */
+      max-height:80vh;                /* a bit taller for full extent */
+      background:#f8fafc;             /* subtle backdrop for letterboxing */
+      padding:0;                      /* no padding to avoid cropping */
+      display:flex; align-items:center; justify-content:center;
+    }
+    .portfolio-grid.mapping-mode .thumb[data-cat="mapping"] img{
+      width:auto; height:auto;        /* override global 100% height */
+      max-width:100%; max-height:80vh;
+      object-fit:contain;             /* show the entire orthomosaic */
+    }
+    .filters{display:flex; gap:10px; flex-wrap:wrap; margin:0 0 16px;}
+    .filter-btn{border:1px solid #dce2e8; background:#fff; color:#0f172a; padding:8px 12px; border-radius:999px; cursor:pointer; font:inherit; font-weight:600; transition:background .15s ease, border-color .15s ease, transform .1s ease;}
+    .filter-btn[aria-pressed="true"]{background:var(--brand); color:#fff; border-color:var(--brand-dark);}
+    .filter-btn:active{transform:translateY(1px)}
+    .thumb.hiding{
+      opacity:0; /* no translate/scale to avoid repaint jank */
+      pointer-events:none;
+    }
+    .thumb.hidden{ display:none; }
+    .lightbox{
+      position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:60;
+      padding:0 84px; /* gutters so arrows sit outside the image */
+    }
+    .lightbox.open{display:flex}
+    .lightbox img{ max-width:100%; max-height:88vh; border-radius:12px }
+    @media (max-width:760px){ .lightbox{ padding:0 56px; } }
+    .lightbox .close{position:absolute; top:16px; right:16px; background:#fff; border:0; padding:8px 12px; border-radius:10px; cursor:pointer}
+
+    /* Lightbox navigation arrows */
+    .lightbox .nav-arrow{
+      position:absolute; top:50%; transform:translateY(-50%);
+      width:48px; height:48px; border-radius:999px; border:0;
+      background:rgba(255,255,255,.85); color:#0b1220; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700;
+      box-shadow:0 6px 20px rgba(0,0,0,.25); opacity:.0; transition:opacity .2s ease, transform .2s ease;
+    }
+    .lightbox.open .nav-arrow{ opacity:1; }
+    .lightbox .nav-prev{ left:24px; }
+    .lightbox .nav-next{ right:24px; }
+    .lightbox .nav-arrow:hover{ transform:translateY(-50%) scale(1.04); }
+    @media (max-width:760px){
+      .lightbox .nav-arrow{ width:40px; height:40px; font-size:18px; }
+      .lightbox .nav-prev{ left:12px; }
+      .lightbox .nav-next{ right:12px; }
+    }
+
+    /* Detailed Services (Accordion) */
+    .accordion{max-width:var(--maxw); margin:0 auto; display:grid; gap:12px}
+    details.service{border:1px solid #e5e7eb; border-radius:12px; background:#fff; overflow:hidden}
+    /* Keep accordion titles visible below sticky header */
+    details.service{ scroll-margin-top: 88px; }
+    details.service[open]{box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    details.service summary{
+      list-style:none; cursor:pointer; padding:16px 18px; font-weight:700;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    details.service summary::-webkit-details-marker{display:none}
+    .svc-body{padding:0 18px 16px; color:var(--muted)}
+    .svc-body p{margin:0 0 10px}
+    .svc-tags{display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 16px}
+    .svc-tag{border:1px solid #e5e7eb; border-radius:999px; padding:6px 10px; font-weight:600; font-size:12px; background:#fff}
+    .jump{display:inline-block; margin-top:12px; font-weight:700; color:var(--brand); text-decoration:none}
+    .card[data-open]{cursor:pointer}
+    /* Quote strip */
+    .quote{background:#ffffff; color:var(--ink); text-align:center; padding:54px 20px}
+    .quote p{max-width:900px; margin:0 auto 8px; font-size:clamp(18px,2.5vw,24px); color:var(--ink)}
+    .quote .by{color:var(--muted)}
+
+    /* Contact */
+    .contact{display:grid; gap:16px; max-width:680px; margin:0 auto}
+    .input, textarea{
+      width:100%; padding:12px 14px; border-radius:12px; border:1px solid #dcdfe4; background:#fff; font:inherit;
+    }
+    textarea{min-height:120px; resize:vertical}
+    .contact-actions{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+
+    /* Footer */
+    footer{padding:32px 20px; text-align:center; color:var(--muted); border-top:1px solid #eee}
+
+    /* Mobile (≤760px) */
+    @media (max-width:760px){
+      .burger{display:block}
+      .links{display:none}
+      .links.open{
+        display:flex; flex-direction:column; gap:10px;
+        position:absolute; top:100%; right:20px;
+        padding:12px; background:#fff; border:1px solid #eee; border-radius:12px;
+        box-shadow:0 10px 30px rgba(0,0,0,.1); z-index:60;
+      }
+    }
+
+    /* Scroll-reveal */
+    .reveal{transition:opacity .5s ease, transform .5s ease}
+    .reveal.show{opacity:1; transform:none}
+
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none!important; scroll-behavior:auto}
+      .hero-video{ display:none !important; }
+      .hero::before{ 
+        background:url('https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat; 
+        opacity:.45; 
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header id="siteHeader">
+    <div class="nav">
+      <div class="brand">
+        <img src="img/logo.png" alt="K.C. Drone Co. logo" />
+      </div>
+
+      <nav class="links" id="links">
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#industries">Industries</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="nav-end">
+        <button class="burger" id="burger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <!-- Background video -->
+    <video class="hero-video" autoplay muted playsinline loop preload="metadata"
+           poster="img/hero-poster.jpg">
+      <!-- Desktop / large screens → 1440p -->
+      <source src="media/hero-1440.mp4" type="video/mp4" media="(min-width: 1024px)">
+      <!-- Mobile / fallback → 1080p -->
+      <source src="media/hero-1080.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="hero-inner reveal">
+      <span class="kicker">Aerial Photography, Mapping, and more</span>
+      <h1>Professional drone imagery, delivered cleanly and on time.</h1>
+      <p>High-resolution photos, video, and maps for real estate, insurance in the WUI, and events. Part 107 certified with public-safety experience.</p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:12px">
+        <a class="btn" href="#contact">Request a quote</a>
+        <a class="btn alt" href="#portfolio">See portfolio</a>
+      </div>
+    </div>
+  </section>
+  <div class="feather-divider to-alt" aria-hidden="true"></div>
+
+  <!-- About -->
+  <section class="section alt" id="about">
+    <div class="container">
+      <h2 class="reveal">About</h2>
+      <p class="muted reveal">Minimalist deliverables with consistent framing and color. Clear scope, safe operations, and files delivered where you need them.</p>
+
+      <div class="badges reveal">
+        <span class="badge">FAA Part 107 Certified</span>
+        <span class="badge">Insured</span>
+        <span class="badge">Southern California</span>
+        <span class="badge">Public-safety adjacent experience</span>
+      </div>
+      <div class="about-media">
+        <div class="thumb reveal">
+          <img src="img/about_drone_001.jpg" alt="Aerial view captured by K.C. Drone Co." loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="feather-divider to-white" aria-hidden="true"></div>
+
+  <!-- Services -->
+  <section class="section" id="services">
+    <div class="container">
+      <h2 class="reveal">Services</h2>
+      <p class="muted reveal">Start lean. Scale as needed.</p>
+
+      <div class="grid">
+        <div class="card reveal">
+          <h3>Photography<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+        <div class="card reveal">
+          <h3>Videography<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+        <div class="card reveal" data-open="mapping">
+          <h3>Orthomosaics<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+        <div class="card reveal" data-open="models">
+          <h3>3D Models<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="feather-divider to-alt" aria-hidden="true"></div>
+
+  <!-- Portfolio -->
+  <section class="section alt" id="portfolio">
+    <div class="container">
+      <h2 class="reveal">Portfolio</h2>
+      <p class="muted reveal">Filter by service. Click any image to view larger.</p>
+      <div class="filters" role="toolbar" aria-label="Filter portfolio">
+        <button class="filter-btn" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter-btn" data-filter="real-estate" aria-pressed="false">Real Estate</button>
+        <button class="filter-btn" data-filter="insurance" aria-pressed="false">Insurance (WUI)</button>
+        <button class="filter-btn" data-filter="mapping" aria-pressed="false">Mapping</button>
+        <button class="filter-btn" data-filter="construction" aria-pressed="false">Construction</button>
+        <button class="filter-btn" data-filter="utilities" aria-pressed="false">Utilities</button>
+        <button class="filter-btn" data-filter="landscaping" aria-pressed="false">Landscaping</button>
+        <button class="filter-btn" data-filter="events" aria-pressed="false">Events</button>
+      </div>
+      <div class="portfolio-grid" id="portfolioGrid">
+        <div class="thumb reveal" data-cat="events">
+          <img src="img/EVENT_001.JPG" alt="Event aerial coverage over crowd and stage" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="real-estate">
+          <img src="img/RE_001.JPG" alt="Residential property exterior — front elevation from above" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="real-estate">
+          <img src="img/RE_002.JPG" alt="Residential property exterior — rear yard context" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="real-estate">
+          <img src="img/RE_003.JPG" alt="Commercial exterior — front elevation" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="real-estate">
+          <img src="img/RE_004.JPG" alt="Residential roofline and lot overview" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="real-estate">
+          <img src="img/RE_005.JPG" alt="Neighborhood proximity and access" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="real-estate">
+          <img src="img/RE_006.JPG" alt="Commercial site context from above" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="insurance">
+          <img src="img/WUI_001.JPG" alt="Wildland–Urban Interface defensible space survey" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="insurance">
+          <img src="img/WUI_002.JPG" alt="WUI — roof condition and adjacent fuels" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="insurance">
+          <img src="img/WUI_003.JPG" alt="WUI — defensible space documentation" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="mapping">
+          <img src="img/odm_orthophoto.png" alt="Neighborhood orthomosaic (mapping)" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="construction">
+          <img src="img/CONSTR_001.JPG" alt="Construction progress — perimeter and staging overview" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="construction">
+          <img src="img/CONSTR_002.JPG" alt="Construction progress — elevation callouts" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="utilities">
+          <img src="img/UTIL_001.JPG" alt="Utilities corridor / structure inspection overview" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="utilities">
+          <img src="img/UTIL_002.JPG" alt="Utilities — corridor overview with structures" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="landscaping">
+          <img src="img/LAND_001.JPG" alt="Landscaping coverage — site context and areas of work" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="landscaping">
+          <img src="img/LAND_002.JPG" alt="Landscaping — coverage areas from above" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+        <div class="thumb reveal" data-cat="landscaping">
+          <img src="img/LAND_003.JPG" alt="Landscaping — before and after context" sizes="(max-width:600px) 100vw, (max-width:1100px) 50vw, 33vw">
+        </div>
+      </div>
+    </div>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="close" id="lbClose" aria-label="Close">Close</button>
+    <button class="nav-arrow nav-prev" id="lbPrev" aria-label="Previous image" title="Previous">‹</button>
+    <img id="lbImg" alt="">
+    <button class="nav-arrow nav-next" id="lbNext" aria-label="Next image" title="Next">›</button>
+  </div>
+  </section>
+  <div class="feather-divider to-white" aria-hidden="true"></div>
+
+  <!-- Industries -->
+  <section class="section" id="industries">
+    <div class="container">
+      <h2 class="reveal">Industries</h2>
+      <p class="muted reveal">Where a drone is required or the most efficient tool.</p>
+
+      <div class="grid">
+        <div class="card reveal" data-open="real-estate">
+          <h3>Real Estate<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+        <div class="card reveal" data-open="insurance">
+          <h3>Insurance (WUI)<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+        <div class="card reveal" data-open="events">
+          <h3>Events<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+        <div class="card reveal" data-open="construction">
+          <h3>Construction<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+        <div class="card reveal" data-open="utilities">
+          <h3>Utilities<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+        <div class="card reveal" data-open="landscaping">
+          <h3>Landscaping<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="feather-divider to-alt" aria-hidden="true"></div>
+
+  <!-- Detailed Services -->
+  <section class="section alt" id="service-details">
+    <div class="container">
+      <h2 class="reveal">Detailed Services</h2>
+      <p class="muted reveal">What you get, how we capture it, and how files are delivered.</p>
+
+      <div class="accordion">
+        <details class="service" id="details-real-estate">
+          <summary>Real Estate</summary>
+          <div class="svc-body">
+            <p>Clean exterior coverage for residential and commercial properties. Standard sets include front elevation, rear yard, roofline context, and surrounding area for proximity and access. Deliverables sized for MLS and web, with consistent color and horizon leveling.</p>
+            <div class="svc-tags">
+              <span class="svc-tag">Exterior stills</span>
+              <span class="svc-tag">Neighborhood context</span>
+              <span class="svc-tag">MLS-ready</span>
+            </div>
+            <a class="jump" href="#portfolio" data-filter="real-estate">See examples →</a>
+          </div>
+        </details>
+
+        <details class="service" id="details-insurance">
+          <summary>Insurance (WUI)</summary>
+          <div class="svc-body">
+            <p>Aerial documentation for defensible space, roof condition, access routes, and adjacent fuels in the wildland–urban interface. Repeatable capture plans allow before/after comparisons. Files provided as labeled stills and optional stitched overviews for field teams and adjusters.</p>
+            <div class="svc-tags">
+              <span class="svc-tag">Defensible space</span>
+              <span class="svc-tag">Access & egress</span>
+              <span class="svc-tag">Before/after sets</span>
+            </div>
+            <a class="jump" href="#portfolio" data-filter="insurance">See examples →</a>
+          </div>
+        </details>
+
+        <details class="service" id="details-events">
+          <summary>Events</summary>
+          <div class="svc-body">
+            <p>Permitted drone coverage for venues where aerial perspective provides scale and flow. Focus on safe flight paths, crowd avoidance, and the key establishing shots needed by marketing and operations. Edited clips are delivered for social, web, or recap reels.</p>
+            <div class="svc-tags">
+              <span class="svc-tag">Permitted flights</span>
+              <span class="svc-tag">Establishing shots</span>
+              <span class="svc-tag">Social-ready edits</span>
+            </div>
+            <a class="jump" href="#portfolio" data-filter="events">See examples →</a>
+          </div>
+        </details>
+
+        <details class="service" id="details-mapping">
+          <summary>Orthomosaics / Mapping</summary>
+          <div class="svc-body">
+            <p>Georeferenced 2D imagery assembled from systematic flight lines. Useful for site change detection, measurement, and annotation. Delivery options include web-friendly JPEG/PNG tiles, full-resolution images, and shareable viewers for non-technical teams.</p>
+            <div class="svc-tags">
+              <span class="svc-tag">Orthomosaics</span>
+              <span class="svc-tag">Change detection</span>
+              <span class="svc-tag">Shareable viewers</span>
+            </div>
+            <a class="jump" href="#portfolio" data-filter="mapping">See examples →</a>
+          </div>
+        </details>
+
+        <details class="service" id="details-models">
+          <summary>3D Models</summary>
+          <div class="svc-body">
+            <p>Photogrammetric models for site context and geometry checks. Suitable for stakeholder reviews, planning, and basic measurement. Delivered as web-viewable models or screenshots with callouts; raw assets can be provided on request.</p>
+            <div class="svc-tags">
+              <span class="svc-tag">Photogrammetry</span>
+              <span class="svc-tag">Stakeholder review</span>
+              <span class="svc-tag">Web-viewable</span>
+            </div>
+            <a class="jump" href="#portfolio" data-filter="real-estate">See examples →</a>
+          </div>
+        </details>
+
+        <details class="service" id="details-construction">
+          <summary>Construction</summary>
+          <div class="svc-body">
+            <p>Progress documentation, site logistics, and safety visuals captured on predictable intervals. Standard sets include perimeter context, staging areas, access routes, rooflines, and elevation callouts. Deliverables provided as dated stills and optional stitched overviews for PMs and stakeholders.</p>
+            <div class="svc-tags">
+              <span class="svc-tag">Progress sets</span>
+              <span class="svc-tag">Access & staging</span>
+              <span class="svc-tag">Stakeholder updates</span>
+            </div>
+            <a class="jump" href="#portfolio" data-filter="construction">See examples →</a>
+          </div>
+        </details>
+
+        <details class="service" id="details-utilities">
+          <summary>Utilities</summary>
+          <div class="svc-body">
+            <p>Line and structure inspections, corridor mapping, and ROW overview with an emphasis on clear, repeatable vantage points. Media organized for engineering review with consistent labeling and export formats.</p>
+            <div class="svc-tags">
+              <span class="svc-tag">Corridor overviews</span>
+              <span class="svc-tag">Structure checks</span>
+              <span class="svc-tag">Repeatable angles</span>
+            </div>
+            <a class="jump" href="#portfolio" data-filter="utilities">See examples →</a>
+          </div>
+        </details>
+
+        <details class="service" id="details-landscaping">
+          <summary>Landscaping</summary>
+          <div class="svc-body">
+            <p>Aerial visuals for proposals and progress: site context, coverage areas, and before/after deliverables. Useful for estimating, approvals, and client updates. Options include stitched overviews for large sites.</p>
+            <div class="svc-tags">
+              <span class="svc-tag">Before / after</span>
+              <span class="svc-tag">Coverage areas</span>
+              <span class="svc-tag">Client-ready visuals</span>
+            </div>
+            <a class="jump" href="#portfolio" data-filter="landscaping">See examples →</a>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+  <div class="feather-divider to-white" aria-hidden="true"></div>
+
+  <!-- Testimonials -->
+  <section class="quote">
+    <p>Testimonials go here.</p>
+    <div class="by">&nbsp;</div>
+  </section>
+  <div class="feather-divider to-alt" aria-hidden="true"></div>
+
+  <!-- Contact -->
+  <section class="section alt" id="contact">
+    <div class="container">
+      <h2 class="reveal">Contact</h2>
+      <p class="muted reveal">Tell us about your site, timeline, and deliverables. We’ll respond with a scope and quote.</p>
+
+      <form class="contact reveal" onsubmit="mailtoFallback(event)">
+        <input class="input" type="text" name="name" placeholder="Your name" required />
+        <input class="input" type="email" name="email" placeholder="Email address" required />
+        <input class="input" type="text" name="subject" placeholder="Project / site location" />
+        <textarea name="message" placeholder="What do you need shot or mapped? Dates? Any flight restrictions to note?" required></textarea>
+        <div class="contact-actions">
+          <button class="btn" type="submit">Request a quote</button>
+          <a class="links" href="mailto:kentcebreros752@gmail.com">Or email: kentcebreros752@gmail.com</a>
+        </div>
+      </form>
+    </div>
+  </section>
+  <div class="feather-divider to-white" aria-hidden="true"></div>
+  <footer>
+    © <span id="year"></span> K.C. Drone Co. — All rights reserved ·
+    <a href="tel:+19497354519" style="color:inherit; text-decoration:none">949-735-4519</a> ·
+    <a href="mailto:kentcebreros752@gmail.com" style="color:inherit; text-decoration:none">kentcebreros752@gmail.com</a>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const burger = document.getElementById('burger');
+      const links  = document.getElementById('links');
+      burger?.addEventListener('click', ()=> links.classList.toggle('open'));
+
+      // Respect Data Saver: prefer lighter hero video
+      (function(){
+        const vid = document.querySelector('.hero-video');
+        if(!vid) return;
+        const saveData = navigator.connection && navigator.connection.saveData;
+        if(saveData){
+          vid.preload = 'none';
+          const desktopSrc = vid.querySelector('source[media]');
+          if(desktopSrc) desktopSrc.remove();
+          vid.load();
+        }
+      })();
+
+      // Active link highlight
+      const sections = Array.from(document.querySelectorAll('section[id]'));
+      const navLinks = Array.from(document.querySelectorAll('.links a'));
+      function activate() {
+        const y = window.scrollY + 120;
+        let current = sections.length ? sections[0].id : null;
+        sections.forEach(s => { if (y >= s.offsetTop) current = s.id; });
+        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+current));
+      }
+      window.addEventListener('scroll', activate, {passive:true}); activate();
+
+      // Smooth shrink (rAF)
+      const header = document.getElementById('siteHeader');
+      const threshold = 10;
+      let ticking = false;
+      function onScroll() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            if (window.scrollY > threshold) header.classList.add('shrink');
+            else header.classList.remove('shrink');
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+      window.addEventListener('scroll', onScroll, {passive:true});
+      onScroll();
+
+      // Scroll-reveal
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if (e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); }
+        });
+      },{threshold:.12});
+      document.querySelectorAll('.reveal, .card').forEach(el=>io.observe(el));
+
+      // Lightbox with navigation
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lbImg');
+      const lbPrev = document.getElementById('lbPrev');
+      const lbNext = document.getElementById('lbNext');
+      const lbClose = document.getElementById('lbClose');
+
+      let currentIndex = -1;
+      function getVisibleThumbImgs(){
+        // Only include currently visible thumbs (not .hidden)
+        return items.filter(el => !el.classList.contains('hidden')).map(el => el.querySelector('img'));
+      }
+      function showAt(idx){
+        const visibleImgs = getVisibleThumbImgs();
+        if(!visibleImgs.length) return;
+        // wrap index
+        currentIndex = (idx + visibleImgs.length) % visibleImgs.length;
+        const img = visibleImgs[currentIndex];
+        lbImg.src = img.src;
+        lbImg.alt = img.alt || '';
+        // Preload neighbors for snappier nav
+        const prev = visibleImgs[(currentIndex - 1 + visibleImgs.length) % visibleImgs.length];
+        const next = visibleImgs[(currentIndex + 1) % visibleImgs.length];
+        [prev?.src, next?.src].forEach(s=>{ if(s){ const i=new Image(); i.src=s; } });
+      }
+      function openLightboxFrom(img){
+        const visibleImgs = getVisibleThumbImgs();
+        currentIndex = visibleImgs.indexOf(img);
+        if(currentIndex === -1){ currentIndex = 0; }
+        showAt(currentIndex);
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden','false');
+      }
+
+      // open on click
+      document.querySelectorAll('.thumb img').forEach(img=>{
+        img.addEventListener('click', ()=> openLightboxFrom(img));
+      });
+
+      // Close
+      lbClose.addEventListener('click', ()=>{
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden','true');
+        lbImg.src = '';
+      });
+      lb.addEventListener('click', (e)=>{ if(e.target===lb) lbClose.click(); });
+
+      // Prev/Next buttons (stop click from bubbling to overlay)
+      lbPrev.addEventListener('click', (e)=>{ e.stopPropagation(); showAt(currentIndex - 1); });
+      lbNext.addEventListener('click', (e)=>{ e.stopPropagation(); showAt(currentIndex + 1); });
+
+      // Keyboard navigation when lightbox is open
+      document.addEventListener('keydown', (e)=>{
+        if(!lb.classList.contains('open')) return;
+        if(e.key === 'ArrowLeft'){ e.preventDefault(); showAt(currentIndex - 1); }
+        else if(e.key === 'ArrowRight'){ e.preventDefault(); showAt(currentIndex + 1); }
+        else if(e.key === 'Escape'){ e.preventDefault(); lbClose.click(); }
+      });
+
+      // Year
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Mailto fallback
+      const EMAIL = 'kentcebreros752@gmail.com';
+      window.mailtoFallback = function(e){
+        e.preventDefault();
+        const data = new FormData(e.target);
+        const name = encodeURIComponent(data.get('name')||'');
+        const email = encodeURIComponent(data.get('email')||'');
+        const subject = encodeURIComponent((data.get('subject')||'Website Inquiry') + ' — K.C. Drone Co.');
+        const msg = encodeURIComponent(data.get('message')||'');
+        const body = `Name: ${name}%0AEmail: ${email}%0ASubject: ${subject}%0A%0A${msg}`;
+        window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
+      };
+
+      // ---- Portfolio Filters ----
+      const grid = document.getElementById('portfolioGrid');
+      const items = Array.from(grid.querySelectorAll('.thumb'));
+      const btns  = Array.from(document.querySelectorAll('.filter-btn'));
+
+      function updateCols(){
+        const visible = items.filter(el=>!el.classList.contains('hidden')).length;
+        grid.classList.toggle('cols-1', visible === 1);
+        grid.classList.toggle('cols-2', visible === 2);
+        if (visible !== 1 && visible !== 2){ grid.classList.remove('cols-1','cols-2'); }
+      }
+
+      function setFilter(cat){
+        const FADE_MS = 120; // quick fade-in only
+        grid.classList.add('filtering');
+
+        // Determine which should be visible
+        const toShow = [];
+        items.forEach(el=>{
+          const match = (cat==='all') || (el.dataset.cat === cat);
+          if (match) toShow.push(el);
+        });
+
+        // 1) Immediately hide everything not matching (no fade-out to avoid double columns)
+        items.forEach(el=>{
+          const match = toShow.includes(el);
+          el.classList.toggle('hidden', !match);
+          el.classList.remove('hiding'); // reset
+        });
+
+        // 2) Apply columns based on how many will be shown
+        updateCols();
+        grid.classList.toggle('mapping-mode', cat === 'mapping');
+
+        // 3) Fade in matching items cleanly
+        toShow.forEach(el=>{
+          // start transparent, then fade to 1
+          el.classList.add('hiding');
+          // force reflow then remove hiding to trigger opacity transition
+          void el.offsetWidth;
+          el.classList.remove('hiding');
+        });
+
+        // Remove filtering flag after fade completes
+        setTimeout(()=>{ grid.classList.remove('filtering'); }, FADE_MS + 30);
+      }
+      function press(btn){
+        btns.forEach(b=>b.setAttribute('aria-pressed','false'));
+        btn.setAttribute('aria-pressed','true');
+      }
+      btns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{ press(btn); setFilter(btn.dataset.filter); });
+        btn.addEventListener('keydown', (e)=>{
+          if(e.key==='Enter' || e.key===' '){ e.preventDefault(); btn.click(); }
+        });
+      });
+
+      // ---- Detailed Services: open/scroll helpers ----
+      const detailsMap = {
+        'real-estate': document.getElementById('details-real-estate'),
+        'insurance':   document.getElementById('details-insurance'),
+        'events':      document.getElementById('details-events'),
+        'mapping':     document.getElementById('details-mapping'),
+        'models':      document.getElementById('details-models'),
+        'construction':document.getElementById('details-construction'),
+        'utilities':   document.getElementById('details-utilities'),
+        'landscaping': document.getElementById('details-landscaping')
+      };
+      // Hide filter buttons that have no matching items (except "All")
+      function refreshFilterButtons(){
+        const catsWithItems = new Set(items.map(el => el.dataset.cat));
+        btns.forEach(b=>{
+          const cat = b.dataset.filter;
+          if (!cat || cat === 'all') return;
+          const has = catsWithItems.has(cat);
+          b.style.display = has ? '' : 'none';
+          // If current active button disappears, fall back to All
+          if (!has && b.getAttribute('aria-pressed') === 'true'){
+            const allBtn = btns.find(x=>x.dataset.filter==='all');
+            allBtn && allBtn.click();
+          }
+        });
+      }
+      refreshFilterButtons();
+
+      function openDetails(key){
+        const d = detailsMap[key];
+        if(!d) return;
+        // close others, open target
+        Object.values(detailsMap).forEach(x=> x && (x.open = false));
+        d.open = true;
+        // Scroll with an offset so the summary is not hidden behind the sticky header
+        const header = document.getElementById('siteHeader');
+        const getHeaderH = () => header ? header.getBoundingClientRect().height : 0;
+        const scrollWithOffset = (el)=>{
+          const y = el.getBoundingClientRect().top + window.pageYOffset - (getHeaderH() + 16);
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        };
+        // Wait for layout to update after opening <details>
+        requestAnimationFrame(()=>{ requestAnimationFrame(()=> scrollWithOffset(d)); });
+      }
+
+      // Make Industry/Service cards clickable
+      document.querySelectorAll('[data-open]').forEach(card=>{
+        card.addEventListener('click', ()=> openDetails(card.dataset.open));
+        card.addEventListener('keypress', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); openDetails(card.dataset.open); } });
+        card.setAttribute('tabindex','0');
+        card.setAttribute('role','button');
+        card.setAttribute('aria-expanded','false');
+      });
+
+      // "See examples" links under each detail open portfolio with the right filter
+      document.querySelectorAll('#service-details .jump').forEach(a=>{
+        a.addEventListener('click', (e)=>{
+          e.preventDefault();
+          const cat = a.dataset.filter;
+          const btn = [...btns].find(b=>b.dataset.filter===cat);
+          if(btn){ btn.click(); }
+          document.getElementById('portfolio').scrollIntoView({behavior:'smooth', block:'start'});
+        });
+      });
+
+      // Ensure only one accordion section is open at a time
+      const svcDetails = Array.from(document.querySelectorAll('details.service'));
+      svcDetails.forEach(d => {
+        d.addEventListener('toggle', () => {
+          if (d.open) {
+            svcDetails.forEach(other => { if (other !== d) other.open = false; });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
