@@ -98,7 +98,8 @@
     /* Hero */
     .hero{
       min-height:70vh; display:grid; place-items:center; text-align:center; padding:84px 20px 56px;
-      color:#fff; position:relative; overflow:hidden; background:#0b1220;
+      color:#fff; position:relative; overflow:hidden;
+      background:#0b1220 url('img/hero-poster.jpg') center/cover no-repeat; /* always show poster under video */
     }
     .hero::before{
       content:""; position:absolute; inset:0;
@@ -350,7 +351,7 @@
   <!-- Hero -->
   <section class="hero">
     <!-- Background video -->
-    <video class="hero-video" autoplay muted playsinline loop preload="metadata"
+    <video class="hero-video" autoplay muted playsinline webkit-playsinline loop preload="metadata"
            poster="img/hero-poster.jpg">
       <!-- Desktop / large screens → 1440p -->
       <source src="media/hero-1440.mp4" type="video/mp4" media="(min-width: 1024px)">
