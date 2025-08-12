@@ -781,17 +781,16 @@
       <p class="muted reveal">Tell us about your site, timeline, and deliverables. We’ll respond with a scope and quote.</p>
 
       <form class="contact reveal" action="https://formspree.io/f/xrbljpzv" method="POST">
-        <!-- Formspree defaults -->
-        <input type="hidden" name="_subject" value="Website Inquiry — K.C. Drone Co.">
-        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
-        <input class="input" type="text" name="name" placeholder="Your name" required />
-        <input class="input" type="email" name="email" placeholder="Email address" required />
-        <!-- Honeypot field to reduce spam (kept off-screen) -->
-        <input type="text" name="_honeypot" autocomplete="off" tabindex="-1" style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
-        <input class="input" id="contact-subject" type="text" name="subject" placeholder="Project / site location" />
-        <textarea name="message" placeholder="What do you need shot or mapped? Dates? Any flight restrictions to note?" required></textarea>
+        <label>
+          Your email:
+          <input class="input" type="email" name="email" required>
+        </label>
+        <label>
+          Your message:
+          <textarea class="input" name="message" required></textarea>
+        </label>
         <div class="contact-actions">
-          <button class="btn" type="submit">Request a quote</button>
+          <button class="btn" type="submit">Send</button>
           <a class="links" href="mailto:kentcebreros752@gmail.com">Or email: kentcebreros752@gmail.com</a>
         </div>
         <div id="form-status" class="form-status" aria-live="polite"></div>
