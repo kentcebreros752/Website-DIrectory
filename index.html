@@ -223,6 +223,9 @@
 
     /* Pricing */
     .price-grid{ display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+    @media (min-width: 960px){
+      .price-grid{ grid-template-columns: repeat(3, minmax(240px, 1fr)); }
+    }
     .price-card{ background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:22px; box-shadow:0 10px 34px rgba(0,0,0,.06); display:flex; flex-direction:column; align-items:stretch; }
     .price-card h3{ margin:0 0 6px; text-align:center; }
     .price-amount{ text-align:center; font-weight:800; font-size:clamp(22px,4vw,28px); color:var(--brand); margin:4px 0 12px; }
@@ -334,6 +337,11 @@
     }
     textarea{min-height:120px; resize:vertical}
     .contact-actions{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+
+    /* Contact form status */
+    .form-status{ text-align:center; font-weight:600; margin-top:6px; min-height:1.2em; }
+    .form-status.ok{ color: var(--brand); }
+    .form-status.err{ color:#b00020; }
 
     /* Footer */
     footer{padding:32px 20px; text-align:center; color:var(--muted); border-top:1px solid #eee}
@@ -769,15 +777,18 @@
       <h2 class="reveal">Contact</h2>
       <p class="muted reveal">Tell us about your site, timeline, and deliverables. We’ll respond with a scope and quote.</p>
 
-      <form class="contact reveal" onsubmit="mailtoFallback(event)">
+      <form class="contact reveal">
         <input class="input" type="text" name="name" placeholder="Your name" required />
         <input class="input" type="email" name="email" placeholder="Email address" required />
+        <!-- Honeypot field to reduce spam (kept off-screen) -->
+        <input type="text" name="_honeypot" autocomplete="off" tabindex="-1" style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
         <input class="input" id="contact-subject" type="text" name="subject" placeholder="Project / site location" />
         <textarea name="message" placeholder="What do you need shot or mapped? Dates? Any flight restrictions to note?" required></textarea>
         <div class="contact-actions">
           <button class="btn" type="submit">Request a quote</button>
           <a class="links" href="mailto:kentcebreros752@gmail.com">Or email: kentcebreros752@gmail.com</a>
         </div>
+        <div id="form-status" class="form-status" aria-live="polite"></div>
       </form>
     </div>
   </section>
@@ -1065,18 +1076,35 @@
       });
 
       // Optional: Formspree integration (paste your endpoint URL below)
-      const FORMSPREE_URL = '';// e.g., 'https://formspree.io/f/abcdefg'
+      const FORMSPREE_URL = 'https://formspree.io/f/xrbljpzv';
       if (FORMSPREE_URL){
         const form = document.querySelector('form.contact');
+        const statusEl = document.getElementById('form-status');
+        const submitBtn = form.querySelector('button[type="submit"]');
         form.addEventListener('submit', async (e)=>{
           e.preventDefault();
+          statusEl.textContent = '';
+          statusEl.className = 'form-status';
+          // Honeypot: if filled, silently ignore
+          const pot = form.querySelector('input[name="_honeypot"]').value.trim();
+          if (pot){ return; }
+          // Build payload
           const data = new FormData(form);
-          const res = await fetch(FORMSPREE_URL, { method:'POST', body:data, headers:{ 'Accept':'application/json' }});
-          if(res.ok){
-            alert('Thanks — your message was sent.');
-            form.reset();
-          }else{
-            alert('Sorry, there was a problem sending your message. Please email us directly.');
+          // Provide a default subject if empty
+          if(!data.get('subject')){ data.set('subject','Website Inquiry — K.C. Drone Co.'); }
+          submitBtn.disabled = true; const prev = submitBtn.textContent; submitBtn.textContent = 'Sending…';
+          try{
+            const res = await fetch(FORMSPREE_URL, { method:'POST', body:data, headers:{ 'Accept':'application/json' }});
+            if(res.ok){
+              statusEl.textContent = 'Thanks — your message was sent.'; statusEl.classList.add('ok');
+              form.reset();
+            }else{
+              statusEl.textContent = 'Sorry, there was a problem sending your message. Please email us directly.'; statusEl.classList.add('err');
+            }
+          }catch(err){
+            statusEl.textContent = 'Network error. Please try again or email us directly.'; statusEl.classList.add('err');
+          }finally{
+            submitBtn.disabled = false; submitBtn.textContent = prev;
           }
         });
       }
