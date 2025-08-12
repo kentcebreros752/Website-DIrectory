@@ -334,7 +334,6 @@
     .quote .by{color:var(--muted)}
 
     /* Contact */
-    #contact .muted{ text-align:center; }
     .contact{display:grid; gap:16px; max-width:680px; margin:0 auto}
     .input, textarea{
       width:100%; padding:12px 14px; border-radius:12px; border:1px solid #dcdfe4; background:#fff; font:inherit;
@@ -342,10 +341,10 @@
     textarea{min-height:120px; resize:vertical}
     .contact-actions{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
 
-    /* Hide-for-now form helper + alt CTAs */
+    /* Temporary: hide contact form until Formspree is enabled */
     .hidden-form{ display:none !important; }
-    .contact-alt{ max-width:680px; margin:0 auto; text-align:center; }
-    .contact-alt .contact-actions{ justify-content:center; }
+    .contact-fallback{ max-width:680px; margin:12px auto 0; text-align:center; }
+    .contact-fallback .contact-actions{ justify-content:center; }
 
     /* Contact form status */
     .form-status{ text-align:center; font-weight:600; margin-top:6px; min-height:1.2em; }
@@ -803,12 +802,12 @@
         </div>
         <div id="form-status" class="form-status" aria-live="polite"></div>
       </form>
-      <!-- Temporary contact CTAs while the form is disabled -->
-      <div class="contact-alt reveal">
-        <p class="muted">Online form coming soon. In the meantime:</p>
+      <!-- Fallback while online form is disabled -->
+      <div class="contact-fallback reveal">
+        <p class="muted">Online request form coming soon. For now, please contact us directly:</p>
         <div class="contact-actions">
-          <a class="btn" href="mailto:kentcebreros752@gmail.com" aria-label="Email us">Email us</a>
-          <a class="btn alt" href="tel:+19497354519">Call 949‑735‑4519</a>
+          <a class="btn" href="mailto:kentcebreros752@gmail.com?subject=Website%20Inquiry%20—%20K.C.%20Drone%20Co.">Email us</a>
+          <a class="btn alt" href="tel:+19497354519">Call 949-735-4519</a>
         </div>
       </div>
     </div>
