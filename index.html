@@ -141,12 +141,17 @@
       display:inline-block; padding:12px 18px; border-radius:12px;
       background:var(--brand); color:#fff; text-decoration:none; font-weight:700;
       box-shadow:0 8px 24px rgba(63,110,145,.35); transition:.2s transform;
+      white-space: normal; /* allow wrapping so long emails can show */
+      text-align: center;
     }
     .btn:hover{transform:translateY(-1px)}
     /* Button states for contact form */
     .btn.is-sending{ opacity:.85; pointer-events:none; }
     .btn.is-sent{ background: var(--brand-dark); pointer-events:none; }
     .btn.alt{background:#fff; color:var(--brand); border:1px solid rgba(0,0,0,.06)}
+
+    .email-btn{ font-weight:700; }
+    @media (max-width:480px){ .email-btn{ font-size:0.95rem; padding:12px 14px; } }
 
     /* Sections */
     .section{padding-inline:20px; padding-block:clamp(24px, 4vw, 40px); position:relative}
@@ -200,6 +205,12 @@
     }
     .grid{display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
     .card{
+    /* Industries: narrower, centered cards with centered labels */
+    #industries .grid{
+      grid-template-columns: repeat(auto-fit, minmax(180px, 260px));
+      justify-content: center;
+    }
+    #industries .card h3{ text-align:center; justify-content:center; }
       background:var(--card); border:1px solid #eee; border-radius:var(--radius);
       padding:22px; box-shadow:0 10px 34px rgba(0,0,0,.06); transform:translateY(10px); opacity:0;
     }
@@ -327,6 +338,23 @@
     .svc-tags{display:flex; flex-wrap:wrap; gap:8px; padding:0 18px 16px}
     .svc-tag{border:1px solid #e5e7eb; border-radius:999px; padding:6px 10px; font-weight:600; font-size:12px; background:#fff}
     .jump{display:inline-block; margin-top:12px; font-weight:700; color:var(--brand); text-decoration:none}
+
+    /* ---- Accordion affordances ---- */
+    details.service summary{ position:relative; border-bottom:1px solid #f0f2f5; border-radius:12px; transition: background .18s ease; }
+    details.service summary:hover{ background:#f8fafc; }
+    details.service:focus-within summary{ outline:2px solid rgba(63,110,145,.25); outline-offset:2px; }
+
+    /* Title + info icon on the left */
+    .svc-head{ display:flex; align-items:center; gap:10px; }
+    .svc-i{ width:16px; height:16px; opacity:.9; }
+
+    /* Small hint on mobile to suggest it’s tappable */
+    .svc-hint{ color:var(--muted); font-weight:600; font-size:12px; margin-left:8px; display:none; }
+    @media (max-width:760px){ .svc-hint{ display:inline-block; } }
+
+    /* Chevron on the right that rotates on open */
+    .svc-chevron{ margin-left:auto; font-weight:900; transform:rotate(0); transition: transform .22s ease; opacity:.75; }
+    details[open].service .svc-chevron{ transform:rotate(90deg); }
     .card[data-open]{cursor:pointer}
     /* Quote strip */
     .quote{background:#ffffff; color:var(--ink); text-align:center; padding:36px 20px}
@@ -340,6 +368,9 @@
     }
     textarea{min-height:120px; resize:vertical}
     .contact-actions{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+
+    /* Center the intro line in Contact */
+    #contact .muted{ text-align:center; }
 
     /* Temporary: hide contact form until Formspree is enabled */
     .hidden-form{ display:none !important; }
@@ -562,22 +593,22 @@
 
       <div class="grid">
         <div class="card reveal" data-open="real-estate">
-          <h3>Real Estate<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+          <h3>Real Estate</h3>
         </div>
         <div class="card reveal" data-open="insurance">
-          <h3>Insurance (WUI)<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+          <h3>Insurance (WUI)</h3>
         </div>
         <div class="card reveal" data-open="events">
-          <h3>Events<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+          <h3>Events</h3>
         </div>
         <div class="card reveal" data-open="construction">
-          <h3>Construction<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+          <h3>Construction</h3>
         </div>
         <div class="card reveal" data-open="utilities">
-          <h3>Utilities<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+          <h3>Utilities</h3>
         </div>
         <div class="card reveal" data-open="landscaping">
-          <h3>Landscaping<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+          <h3>Landscaping</h3>
         </div>
       </div>
     </div>
@@ -592,7 +623,7 @@
 
       <div class="accordion">
         <details class="service" id="details-real-estate">
-          <summary>Real Estate</summary>
+          <summary><span class="svc-head"><img src="img/info_icon.png" alt="info" class="info-icon svc-i"> Real Estate</span><span class="svc-hint">Tap to expand</span><span class="svc-chevron">›</span></summary>
           <div class="svc-body">
             <p>Clean exterior coverage for residential and commercial properties. Standard sets include front elevation, rear yard, roofline context, and surrounding area for proximity and access. Deliverables sized for MLS and web, with consistent color and horizon leveling.</p>
             <div class="svc-tags">
@@ -605,7 +636,7 @@
         </details>
 
         <details class="service" id="details-insurance">
-          <summary>Insurance (WUI)</summary>
+          <summary><span class="svc-head"><img src="img/info_icon.png" alt="info" class="info-icon svc-i"> Insurance (WUI)</span><span class="svc-hint">Tap to expand</span><span class="svc-chevron">›</span></summary>
           <div class="svc-body">
             <p>Aerial documentation for defensible space, roof condition, access routes, and adjacent fuels in the wildland–urban interface. Repeatable capture plans allow before/after comparisons. Files provided as labeled stills and optional stitched overviews for field teams and adjusters.</p>
             <div class="svc-tags">
@@ -618,7 +649,7 @@
         </details>
 
         <details class="service" id="details-events">
-          <summary>Events</summary>
+          <summary><span class="svc-head"><img src="img/info_icon.png" alt="info" class="info-icon svc-i"> Events</span><span class="svc-hint">Tap to expand</span><span class="svc-chevron">›</span></summary>
           <div class="svc-body">
             <p>Permitted drone coverage for venues where aerial perspective provides scale and flow. Focus on safe flight paths, crowd avoidance, and the key establishing shots needed by marketing and operations. Edited clips are delivered for social, web, or recap reels.</p>
             <div class="svc-tags">
@@ -631,7 +662,7 @@
         </details>
 
         <details class="service" id="details-mapping">
-          <summary>Orthomosaics / Mapping</summary>
+          <summary><span class="svc-head"><img src="img/info_icon.png" alt="info" class="info-icon svc-i"> Orthomosaics / Mapping</span><span class="svc-hint">Tap to expand</span><span class="svc-chevron">›</span></summary>
           <div class="svc-body">
             <p>Georeferenced 2D imagery assembled from systematic flight lines. Useful for site change detection, measurement, and annotation. Delivery options include web-friendly JPEG/PNG tiles, full-resolution images, and shareable viewers for non-technical teams.</p>
             <div class="svc-tags">
@@ -644,7 +675,7 @@
         </details>
 
         <details class="service" id="details-models">
-          <summary>3D Models</summary>
+          <summary><span class="svc-head"><img src="img/info_icon.png" alt="info" class="info-icon svc-i"> 3D Models</span><span class="svc-hint">Tap to expand</span><span class="svc-chevron">›</span></summary>
           <div class="svc-body">
             <p>Photogrammetric models for site context and geometry checks. Suitable for stakeholder reviews, planning, and basic measurement. Delivered as web-viewable models or screenshots with callouts; raw assets can be provided on request.</p>
             <div class="svc-tags">
@@ -657,7 +688,7 @@
         </details>
 
         <details class="service" id="details-construction">
-          <summary>Construction</summary>
+          <summary><span class="svc-head"><img src="img/info_icon.png" alt="info" class="info-icon svc-i"> Construction</span><span class="svc-hint">Tap to expand</span><span class="svc-chevron">›</span></summary>
           <div class="svc-body">
             <p>Progress documentation, site logistics, and safety visuals captured on predictable intervals. Standard sets include perimeter context, staging areas, access routes, rooflines, and elevation callouts. Deliverables provided as dated stills and optional stitched overviews for PMs and stakeholders.</p>
             <div class="svc-tags">
@@ -670,7 +701,7 @@
         </details>
 
         <details class="service" id="details-utilities">
-          <summary>Utilities</summary>
+          <summary><span class="svc-head"><img src="img/info_icon.png" alt="info" class="info-icon svc-i"> Utilities</span><span class="svc-hint">Tap to expand</span><span class="svc-chevron">›</span></summary>
           <div class="svc-body">
             <p>Line and structure inspections, corridor mapping, and ROW overview with an emphasis on clear, repeatable vantage points. Media organized for engineering review with consistent labeling and export formats.</p>
             <div class="svc-tags">
@@ -683,7 +714,7 @@
         </details>
 
         <details class="service" id="details-landscaping">
-          <summary>Landscaping</summary>
+          <summary><span class="svc-head"><img src="img/info_icon.png" alt="info" class="info-icon svc-i"> Landscaping</span><span class="svc-hint">Tap to expand</span><span class="svc-chevron">›</span></summary>
           <div class="svc-body">
             <p>Aerial visuals for proposals and progress: site context, coverage areas, and before/after deliverables. Useful for estimating, approvals, and client updates. Options include stitched overviews for large sites.</p>
             <div class="svc-tags">
@@ -806,7 +837,7 @@
       <div class="contact-fallback reveal">
         <p class="muted">Online request form coming soon. For now, please contact us directly:</p>
         <div class="contact-actions">
-          <a class="btn" href="mailto:kentcebreros752@gmail.com?subject=Website%20Inquiry%20—%20K.C.%20Drone%20Co.">Email us</a>
+          <a class="btn email-btn" href="mailto:kentcebreros752@gmail.com?subject=Website%20Inquiry%20—%20K.C.%20Drone%20Co." title="Email kentcebreros752@gmail.com" rel="noopener">Email us: kentcebreros752@gmail.com</a>
           <a class="btn alt" href="tel:+19497354519">Call 949-735-4519</a>
         </div>
       </div>
