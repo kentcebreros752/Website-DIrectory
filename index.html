@@ -80,6 +80,13 @@
       will-change: transform;
     }
 
+    /* Mobile brand wordmark next to logo */
+    .brand-name{ display:none; font-weight:800; letter-spacing:.2px; color:var(--brand); white-space:nowrap; }
+    @media (max-width:760px){
+      .brand{ gap:10px; }
+      .brand-name{ display:block; font-size:clamp(14px, 4vw, 18px); }
+    }
+
     .links{
       display:flex; gap:20px; align-items:center;
       justify-content:center; /* center between logo and right margin */
@@ -159,7 +166,7 @@
     }
 
     /* Badges */
-    .badges{display:flex; gap:10px; flex-wrap:wrap}
+    .badges{display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
     .badge{
       display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
       border:1px solid #e5e7eb; background:#fff; color:var(--brand-dark); font-weight:600; font-size:calc(1.1 * 12px);
@@ -168,6 +175,8 @@
     /* About section photo */
     .about-media{ margin-top:22px; }
     #about .thumb{ max-width:900px; margin:0 auto; aspect-ratio:16/9; }
+    /* About image: keep hover zoom, but not clickable */
+    #about .thumb { cursor: default; }
 
     /* Grids / Cards */
     .info-icon{
@@ -340,6 +349,7 @@
     <div class="nav">
       <div class="brand">
         <img src="img/logo.png" alt="K.C. Drone Co. logo" />
+        <span class="brand-name">K.C. Drone Co.</span>
       </div>
 
       <nav class="links" id="links">
@@ -392,7 +402,7 @@
         <span class="badge">Public-safety adjacent experience</span>
       </div>
       <div class="about-media">
-        <div class="thumb reveal">
+        <div class="thumb reveal no-lightbox">
           <img src="img/about_drone_001.jpg" alt="Aerial view captured by K.C. Drone Co." loading="lazy" decoding="async">
         </div>
       </div>
@@ -776,6 +786,7 @@
 
       // open on click
       document.querySelectorAll('.thumb img').forEach(img=>{
+        if (img.closest('.no-lightbox')) return; // skip About image
         img.addEventListener('click', ()=> openLightboxFrom(img));
       });
 
