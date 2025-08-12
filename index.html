@@ -780,7 +780,10 @@
       <h2 class="reveal">Contact</h2>
       <p class="muted reveal">Tell us about your site, timeline, and deliverables. We’ll respond with a scope and quote.</p>
 
-      <form class="contact reveal">
+      <form class="contact reveal" action="https://formspree.io/f/xrbljpzv" method="POST">
+        <!-- Formspree defaults -->
+        <input type="hidden" name="_subject" value="Website Inquiry — K.C. Drone Co.">
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
         <input class="input" type="text" name="name" placeholder="Your name" required />
         <input class="input" type="email" name="email" placeholder="Email address" required />
         <!-- Honeypot field to reduce spam (kept off-screen) -->
@@ -1091,14 +1094,28 @@
           // Honeypot: if filled, silently ignore
           const pot = form.querySelector('input[name="_honeypot"]').value.trim();
           if (pot){ return; }
-          // Build payload
-          const data = new FormData(form);
-          // Provide a default subject if empty
-          if(!data.get('subject')){ data.set('subject','Website Inquiry — K.C. Drone Co.'); }
+          // Build payload as JSON (more reliable with CORS on GitHub Pages)
+          const formObj = Object.fromEntries(new FormData(form).entries());
+          if(!formObj.subject || !formObj.subject.trim()){
+            formObj.subject = 'Website Inquiry — K.C. Drone Co.';
+          }
+          // Ensure we pass an email field (Formspree requirement)
+          if(!formObj.email){
+            statusEl.textContent = 'Please enter a valid email address.'; statusEl.classList.add('err');
+            submitBtn.classList.remove('is-sending');
+            submitBtn.disabled = false; submitBtn.textContent = prev;
+            return;
+          }
+
           submitBtn.disabled = true; const prev = submitBtn.textContent; submitBtn.textContent = 'Sending…'; submitBtn.classList.add('is-sending');
           let handled = false;
           try{
-            const res = await fetch(FORMSPREE_URL, { method:'POST', body:data, headers:{ 'Accept':'application/json' }});
+            const res = await fetch(FORMSPREE_URL, {
+              method:'POST',
+              headers:{ 'Accept':'application/json', 'Content-Type':'application/json' },
+              mode:'cors',
+              body: JSON.stringify(formObj)
+            });
             if(res.ok){
               handled = true;
               statusEl.textContent = 'Thanks — your message was sent.'; statusEl.classList.add('ok');
@@ -1113,7 +1130,14 @@
                 submitBtn.disabled = false;
               }, 2500);
             }else{
-              statusEl.textContent = 'Sorry, there was a problem sending your message. Please email us directly.'; statusEl.classList.add('err');
+              let errMsg = 'Sorry, there was a problem sending your message. Please email us directly.';
+              try{
+                const j = await res.json();
+                if (j && j.errors && j.errors.length){
+                  errMsg = j.errors.map(e=>e.message).join(' ');
+                }
+              }catch(_){}
+              statusEl.textContent = errMsg; statusEl.classList.add('err');
             }
           }catch(err){
             statusEl.textContent = 'Network error. Please try again or email us directly.'; statusEl.classList.add('err');
@@ -1124,6 +1148,7 @@
             }
           }
         });
+      // Note: If you keep seeing errors from Formspree, make sure the form is confirmed in the Formspree dashboard and that the domain (kentcebreros752.github.io) is allowed.
       }
     });
   </script>
