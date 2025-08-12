@@ -85,6 +85,18 @@
     @media (max-width:760px){
       .brand{ gap:10px; }
       .brand-name{ display:block; font-size:clamp(14px, 4vw, 18px); }
+
+      /* Mobile header sizing — keep logo static and smaller */
+      :root{ --logo-box:64px; }
+      header.shrink{ --logo-scale:1; --logo-box:64px; }
+      .nav{ height:64px; }
+      .brand{ height:64px; }
+      .brand img{ height:56px; transform:none; }
+      /* Make sure the wordmark doesn't collide with the burger */
+      .brand-name{
+        max-width: calc(100vw - 140px); /* room for padding + burger area */
+        overflow:hidden; text-overflow:ellipsis;
+      }
     }
 
     .links{
