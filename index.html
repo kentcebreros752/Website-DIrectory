@@ -186,6 +186,9 @@
       box-shadow:0 16px 40px rgba(0,0,0,.10);
       border-color: rgba(63,110,145,.25); /* brand-tinted outline */
     }
+    /* Disable animations/hover in Services section */
+    #services .card{ transform:none !important; opacity:1 !important; transition:none !important; box-shadow:0 10px 34px rgba(0,0,0,.06) !important; }
+    #services .card:hover{ transform:none !important; box-shadow:0 10px 34px rgba(0,0,0,.06) !important; }
     .card h3{margin:0 0 8px}
     /* Center service/industry titles and info icon */
     .card h3{
@@ -400,21 +403,20 @@
   <!-- Services -->
   <section class="section" id="services">
     <div class="container">
-      <h2 class="reveal">Services</h2>
-      <p class="muted reveal">Start lean. Scale as needed.</p>
+      <h2>Services</h2>
 
       <div class="grid">
-        <div class="card reveal">
-          <h3>Photography<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        <div class="card">
+          <h3>Photography</h3>
         </div>
-        <div class="card reveal">
-          <h3>Videography<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        <div class="card">
+          <h3>Videography</h3>
         </div>
-        <div class="card reveal" data-open="mapping">
-          <h3>Orthomosaics<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        <div class="card" data-open="mapping">
+          <h3>Orthomosaics</h3>
         </div>
-        <div class="card reveal" data-open="models">
-          <h3>3D Models<img class="info-icon" src="img/info_icon.png" alt="More information" title="More information"></h3>
+        <div class="card" data-open="models">
+          <h3>3D Models</h3>
         </div>
       </div>
     </div>
@@ -682,6 +684,9 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Ensure page starts at top on load (avoid resuming scrolled state on mobile)
+      try{ if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; }catch(e){}
+      if (!location.hash) { window.scrollTo(0,0); }
       const burger = document.getElementById('burger');
       const links  = document.getElementById('links');
       burger?.addEventListener('click', ()=> links.classList.toggle('open'));
