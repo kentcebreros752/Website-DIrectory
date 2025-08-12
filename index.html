@@ -221,6 +221,17 @@
     }
     .card p{margin:0; color:var(--muted)}
 
+    /* Pricing */
+    .price-grid{ display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+    .price-card{ background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:22px; box-shadow:0 10px 34px rgba(0,0,0,.06); display:flex; flex-direction:column; align-items:stretch; }
+    .price-card h3{ margin:0 0 6px; text-align:center; }
+    .price-amount{ text-align:center; font-weight:800; font-size:clamp(22px,4vw,28px); color:var(--brand); margin:4px 0 12px; }
+    .unit{ color:var(--muted); font-weight:600; font-size:12px; }
+    .feature-list{ list-style:none; padding:0; margin:0 0 16px; display:grid; gap:8px; }
+    .feature-list li{ position:relative; padding-left:22px; }
+    .feature-list li::before{ content:""; position:absolute; left:0; top:8px; width:10px; height:10px; border-radius:2px; border:2px solid var(--brand); transform:rotate(45deg); border-left-color:transparent; border-top-color:transparent; }
+    .price-card .btn{ margin-top:auto; text-align:center; }
+
     /* Portfolio */
     .portfolio-grid{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); align-items:start;}
     /* Smooth height transition to avoid page jump during filtering */
@@ -677,6 +688,79 @@
     <p>Testimonials go here.</p>
     <div class="by">&nbsp;</div>
   </section>
+
+  <div class="feather-divider white-soft" aria-hidden="true"></div>
+
+  <!-- Pricing -->
+  <section class="section" id="pricing">
+    <div class="container">
+      <h2>Pricing</h2>
+      <p class="muted">Transparent starting points. Final quotes depend on scope, airspace, and deliverables.</p>
+
+      <div class="price-grid">
+        <div class="price-card">
+          <h3>Photography</h3>
+          <div class="price-amount">Contact for Quote</div>
+          <ul class="feature-list">
+            <li>High-resolution aerial photos and/or cinematic video of residential or commercial properties</li>
+            <li>Priced per square foot with a minimum charge; quick on-site capture (often ≤ 30 min)</li>
+          </ul>
+          <a href="#contact" class="btn cta-contact" data-subject="Quote: Photography">Request a quote</a>
+        </div>
+
+        <div class="price-card">
+          <h3>Videography</h3>
+          <div class="price-amount">Contact for Quote</div>
+          <ul class="feature-list">
+            <li>High-resolution aerial photos and/or cinematic video of residential or commercial properties</li>
+            <li>Priced per square foot with a minimum charge; quick on-site capture (often ≤ 30 min)</li>
+          </ul>
+          <a href="#contact" class="btn cta-contact" data-subject="Quote: Videography">Request a quote</a>
+        </div>
+
+        <div class="price-card">
+          <h3>Mapping / Orthomosaic</h3>
+          <div class="price-amount">Contact for Quote</div>
+          <ul class="feature-list">
+            <li>Orthomosaics, hazard severity overlays, and PDF risk assessment reports</li>
+            <li>Often part of a larger subcontracted bid; scope and frequency determined by HOA needs</li>
+          </ul>
+          <a href="#contact" class="btn cta-contact" data-subject="Quote: Mapping / Orthomosaic">Request a quote</a>
+        </div>
+
+        <div class="price-card">
+          <h3>3D Models</h3>
+          <div class="price-amount">Contact for Quote</div>
+          <ul class="feature-list">
+            <li>3D model generation with risk annotations</li>
+            <li>Pre- and post-mitigation documentation; coordination with mitigation crews</li>
+            <li>Scope and pricing determined per project</li>
+          </ul>
+          <a href="#contact" class="btn cta-contact" data-subject="Quote: 3D Models">Request a quote</a>
+        </div>
+
+        <div class="price-card">
+          <h3>Encampment Abatement Patrol</h3>
+          <div class="price-amount">Contact for Quote</div>
+          <ul class="feature-list">
+            <li>Aerial patrols of designated areas with geotagged photos, GPS coordinates, and documented findings</li>
+            <li>Can be scheduled quarterly, monthly, or yearly under a recurring contract</li>
+          </ul>
+          <a href="#contact" class="btn cta-contact" data-subject="Quote: Encampment Abatement Patrol">Request a quote</a>
+        </div>
+
+        <div class="price-card">
+          <h3>Recurring HOA Patrol Contract</h3>
+          <div class="price-amount">Contact for Quote</div>
+          <ul class="feature-list">
+            <li>Scheduled aerial inspections and reporting for wildfire risk monitoring</li>
+            <li>Separate from mapping services; offered as a fixed recurring contract</li>
+          </ul>
+          <a href="#contact" class="btn cta-contact" data-subject="Quote: Recurring HOA Patrol Contract">Request a quote</a>
+        </div>
+      </div>
+    </div>
+  </section>
   <div class="feather-divider to-alt" aria-hidden="true"></div>
 
   <!-- Contact -->
@@ -688,7 +772,7 @@
       <form class="contact reveal" onsubmit="mailtoFallback(event)">
         <input class="input" type="text" name="name" placeholder="Your name" required />
         <input class="input" type="email" name="email" placeholder="Email address" required />
-        <input class="input" type="text" name="subject" placeholder="Project / site location" />
+        <input class="input" id="contact-subject" type="text" name="subject" placeholder="Project / site location" />
         <textarea name="message" placeholder="What do you need shot or mapped? Dates? Any flight restrictions to note?" required></textarea>
         <div class="contact-actions">
           <button class="btn" type="submit">Request a quote</button>
@@ -969,6 +1053,33 @@
           }
         });
       });
+      // --- Pricing → Contact helpers ---
+      document.querySelectorAll('.cta-contact').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{
+          const sub = btn.dataset.subject || '';
+          const subjInput = document.getElementById('contact-subject');
+          if(subjInput){ subjInput.value = sub; }
+          // Scroll to contact
+          document.getElementById('contact').scrollIntoView({behavior:'smooth', block:'start'});
+        });
+      });
+
+      // Optional: Formspree integration (paste your endpoint URL below)
+      const FORMSPREE_URL = '';// e.g., 'https://formspree.io/f/abcdefg'
+      if (FORMSPREE_URL){
+        const form = document.querySelector('form.contact');
+        form.addEventListener('submit', async (e)=>{
+          e.preventDefault();
+          const data = new FormData(form);
+          const res = await fetch(FORMSPREE_URL, { method:'POST', body:data, headers:{ 'Accept':'application/json' }});
+          if(res.ok){
+            alert('Thanks — your message was sent.');
+            form.reset();
+          }else{
+            alert('Sorry, there was a problem sending your message. Please email us directly.');
+          }
+        });
+      }
     });
   </script>
 </body>
