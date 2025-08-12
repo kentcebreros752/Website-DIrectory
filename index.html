@@ -34,6 +34,7 @@
       line-height:1.6;
       font-size:110%;
     }
+    html, body{ overflow-x:hidden; }
 
     body {
       letter-spacing: -0.2px;
@@ -70,7 +71,7 @@
       position:relative;                    /* anchor mobile dropdown */
       transition: height .4s cubic-bezier(.22,.61,.36,1), padding .4s cubic-bezier(.22,.61,.36,1);
     }
-    .brand{display:flex; align-items:center; height:var(--logo-box); transition:height .4s cubic-bezier(.22,.61,.36,1)}
+    .brand{display:flex; align-items:center; height:var(--logo-box); overflow:hidden; transition:height .4s cubic-bezier(.22,.61,.36,1)}
     .brand img{
       height:160px; width:auto; display:block;
       transform-origin:left center;
@@ -126,7 +127,7 @@
     .btn.alt{background:#fff; color:var(--brand); border:1px solid rgba(0,0,0,.06)}
 
     /* Sections */
-    .section{padding:68px 20px; position:relative}
+    .section{padding-inline:20px; padding-block:clamp(24px, 4vw, 40px); position:relative}
     .container{max-width:var(--maxw); margin:0 auto}
     h2{font-size:calc(1.1 * clamp(24px,3vw,36px)); margin:0 0 12px}
     .muted{color:var(--muted); margin:0 0 28px}
@@ -135,7 +136,7 @@
     .section.alt{ background:#eaf2f9; }
 
     /* Bulletproof section separators (no seams) */
-    .feather-divider{ height:140px; pointer-events:none; }
+    .feather-divider{ height:clamp(40px, 6vw, 70px); pointer-events:none; }
     /* white → alt(#eaf2f9) */
     .feather-divider.to-alt{
       background:linear-gradient(to bottom, #ffffff 0%, rgba(234,242,249,.35) 45%, rgba(234,242,249,1) 100%);
@@ -203,6 +204,9 @@
     .portfolio-grid.height-lock{ overflow:hidden; }
     .portfolio-grid.cols-1{ grid-template-columns:1fr; }
     .portfolio-grid.cols-2{ grid-template-columns:repeat(2, minmax(340px, 1fr)); }
+    @media (max-width:740px){
+      .portfolio-grid.cols-2{ grid-template-columns:1fr; }
+    }
     .thumb{
       position:relative; overflow:hidden; border-radius:12px; border:1px solid #eee; background:#f7f7f7;
       cursor:pointer;
@@ -284,7 +288,7 @@
     .jump{display:inline-block; margin-top:12px; font-weight:700; color:var(--brand); text-decoration:none}
     .card[data-open]{cursor:pointer}
     /* Quote strip */
-    .quote{background:#ffffff; color:var(--ink); text-align:center; padding:54px 20px}
+    .quote{background:#ffffff; color:var(--ink); text-align:center; padding:36px 20px}
     .quote p{max-width:900px; margin:0 auto 8px; font-size:clamp(18px,2.5vw,24px); color:var(--ink)}
     .quote .by{color:var(--muted)}
 
@@ -308,6 +312,7 @@
         position:absolute; top:100%; right:20px;
         padding:12px; background:#fff; border:1px solid #eee; border-radius:12px;
         box-shadow:0 10px 30px rgba(0,0,0,.1); z-index:60;
+        max-width: calc(100vw - 40px);
       }
     }
 
