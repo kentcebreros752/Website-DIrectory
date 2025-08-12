@@ -143,6 +143,9 @@
       box-shadow:0 8px 24px rgba(63,110,145,.35); transition:.2s transform;
     }
     .btn:hover{transform:translateY(-1px)}
+    /* Button states for contact form */
+    .btn.is-sending{ opacity:.85; pointer-events:none; }
+    .btn.is-sent{ background: var(--brand-dark); pointer-events:none; }
     .btn.alt{background:#fff; color:var(--brand); border:1px solid rgba(0,0,0,.06)}
 
     /* Sections */
@@ -1092,19 +1095,33 @@
           const data = new FormData(form);
           // Provide a default subject if empty
           if(!data.get('subject')){ data.set('subject','Website Inquiry — K.C. Drone Co.'); }
-          submitBtn.disabled = true; const prev = submitBtn.textContent; submitBtn.textContent = 'Sending…';
+          submitBtn.disabled = true; const prev = submitBtn.textContent; submitBtn.textContent = 'Sending…'; submitBtn.classList.add('is-sending');
+          let handled = false;
           try{
             const res = await fetch(FORMSPREE_URL, { method:'POST', body:data, headers:{ 'Accept':'application/json' }});
             if(res.ok){
+              handled = true;
               statusEl.textContent = 'Thanks — your message was sent.'; statusEl.classList.add('ok');
               form.reset();
+              submitBtn.classList.remove('is-sending');
+              submitBtn.classList.add('is-sent');
+              submitBtn.textContent = 'Sent ✓';
+              // keep success state briefly, then restore
+              setTimeout(()=>{
+                submitBtn.classList.remove('is-sent');
+                submitBtn.textContent = prev;
+                submitBtn.disabled = false;
+              }, 2500);
             }else{
               statusEl.textContent = 'Sorry, there was a problem sending your message. Please email us directly.'; statusEl.classList.add('err');
             }
           }catch(err){
             statusEl.textContent = 'Network error. Please try again or email us directly.'; statusEl.classList.add('err');
           }finally{
-            submitBtn.disabled = false; submitBtn.textContent = prev;
+            if(!handled){
+              submitBtn.classList.remove('is-sending');
+              submitBtn.disabled = false; submitBtn.textContent = prev;
+            }
           }
         });
       }
