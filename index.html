@@ -158,6 +158,10 @@
     .container{max-width:var(--maxw); margin:0 auto}
     h2{font-size:calc(1.1 * clamp(24px,3vw,36px)); margin:0 0 12px}
     .muted{color:var(--muted); margin:0 0 28px}
+    /* Center top-level section blurbs & toolbars */
+    .section .container > p.muted{ text-align:center; margin-left:auto; margin-right:auto; }
+    #about .container > p{ text-align:center; margin-left:auto; margin-right:auto; }
+    #portfolio .filters{ justify-content:center; }
 
     /* Alternating section backgrounds */
     .section.alt{ background:#eaf2f9; }
@@ -205,14 +209,32 @@
     }
     .grid{display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
     .card{
-    /* Industries: narrower, centered cards with centered labels */
-    #industries .grid{
-      grid-template-columns: repeat(auto-fit, minmax(180px, 260px));
-      justify-content: center;
-    }
-    #industries .card h3{ text-align:center; justify-content:center; }
       background:var(--card); border:1px solid #eee; border-radius:var(--radius);
       padding:22px; box-shadow:0 10px 34px rgba(0,0,0,.06); transform:translateY(10px); opacity:0;
+    }
+
+    /* Industries: exactly 3 columns on desktop, centered */
+    #industries .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap:20px;
+      justify-items:center;   /* center each card within its cell */
+      justify-content:center; /* center the whole grid if narrower than container */
+    }
+    #industries .card h3{ text-align:center; justify-content:center; }
+
+    /* Tablet: 2 columns */
+    @media (max-width: 900px){
+      #industries .grid{
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+      }
+    }
+
+    /* Mobile: 1 column */
+    @media (max-width: 560px){
+      #industries .grid{
+        grid-template-columns: 1fr;
+      }
     }
     /* Subtle hover lift on cards */
     .card{ transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
@@ -462,15 +484,10 @@
   <!-- About -->
   <section class="section alt" id="about">
     <div class="container">
-      <h2 class="reveal">About</h2>
-      <p class="muted reveal">Minimalist deliverables with consistent framing and color. Clear scope, safe operations, and files delivered where you need them.</p>
-
-      <div class="badges reveal">
-        <span class="badge">FAA Part 107 Certified</span>
-        <span class="badge">Insured</span>
-        <span class="badge">Southern California</span>
-        <span class="badge">Public-safety adjacent experience</span>
-      </div>
+      <h2>About KC Drone Co.</h2>
+      <p>KC Drone Co. provides professional aerial photography, mapping, and inspection services for clients who demand accuracy, creativity, and reliability. With FAA Part 107 certification and extensive field experience alongside law enforcement, real estate, and public safety agencies, we deliver results you can trust.</p>
+      <p>From high-resolution marketing visuals to precise 2D/3D mapping, our fleet of industry-leading drones captures every detail with clarity. We focus on fast turnaround times, clear communication, and a smooth client experience from start to finish.</p>
+      <p>At KC Drone Co., every project is a mission — and we’re committed to giving you a perspective that stands above the rest.</p>
       <div class="about-media">
         <div class="thumb reveal no-lightbox">
           <img src="img/about_drone_001.jpg" alt="Aerial view captured by K.C. Drone Co." loading="lazy" decoding="async">
